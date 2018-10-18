@@ -52,6 +52,18 @@ class Filter:
         im_conv_d = convolution2D(img_matrix, self.matrixFilter)
         return im_conv_d
 
+def threshold(img_matrix, threshold=0.5):
+    result = np.empty([img_matrix.shape[0], img_matrix.shape[1]])
+    # We assume the img is grayscale
+    # Loop over every pixel of the image
+    for column in range(img_matrix.shape[1]):     
+        for row in range(img_matrix.shape[0]):
+            if(img_matrix[row, column] > threshold):
+                result[row,column] = img_matrix[row,column]
+            else:
+                result[row, column] = 0
+    return result
+
 def convolution2D(m1, m2):
     result = np.empty([m1.shape[0], m1.shape[1]])
 
@@ -86,6 +98,7 @@ def RGBtoGrayscale(rgb_matrix):
         for i in range(rgb_matrix.shape[1]):
             grayscale_matrix[j,i] = 0.2126 * rgb_matrix[j,i,0] + 0.7152 * rgb_matrix[j,i,1] + 0.0722 * rgb_matrix[j,i,2]
     return grayscale_matrix
+
 
 
 def filter2D(big_matrix, filter_matrix):

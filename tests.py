@@ -6,6 +6,7 @@ import imageio
 from scipy import signal
 
 from skimage import io
+from skimage import feature
 
 def Test2DConvolution():
     m1 = np.random.rand(5,5)
@@ -289,6 +290,43 @@ def TestStopSignFilter():
     # Show results
     plt.show()
 
+def TestCannyEdgeFilter():
+    img_path = "stop_1_no_alpha.png"
+
+    fig=plt.figure(figsize=(1, 2))
+
+    # Show original image
+    img = plt.imread(img_path)
+    fig.add_subplot(2, 4, 1).title.set_text('Original')
+    plt.axis('off')
+    plt.imshow(img) 
+
+    # Load an image as matrix
+    stop_photo = io.imread(img_path, as_gray=True)
+
+    fig.add_subplot(2, 4, 2).title.set_text('Grayscale result')
+    plt.axis('off')
+    plt.imshow(stop_photo, cmap=plt.cm.gray)
+
+    # Threshold 
+    thresholded = fltr.threshold(stop_photo, 0.82)
+    fig.add_subplot(2, 4, 3).title.set_text('Threshold result')
+    plt.axis('off')
+    plt.imshow(thresholded, cmap=plt.cm.gray)
+
+    edges1 = feature.canny(stop_photo, 1.5)
+    fig.add_subplot(2, 4, 4).title.set_text('Canny edge result')
+    plt.axis('off')
+    plt.imshow(edges1, cmap=plt.cm.gray)
+
+    edges2 = feature.canny(thresholded, 1.2)
+    fig.add_subplot(2, 4, 5).title.set_text('Canny edge on threshold result')
+    plt.axis('off')
+    plt.imshow(edges2, cmap=plt.cm.gray)
+
+    plt.show()
+
+
 def main():
     
     #Test2DConvolution()
@@ -301,7 +339,9 @@ def main():
 
     #TestGrayscaleConversion()
 
-    TestStopSignFilter()
+    #TestStopSignFilter()
+
+    TestCannyEdgeFilter()
 
 if __name__ == '__main__':
     main()
