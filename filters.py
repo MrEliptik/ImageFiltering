@@ -52,17 +52,78 @@ class Filter:
         im_conv_d = convolution2D(img_matrix, self.matrixFilter)
         return im_conv_d
 
-def threshold(img_matrix, threshold=0.5):
+def threshold(img_matrix, threshold=0.5, keepvalue=False):
     result = np.empty([img_matrix.shape[0], img_matrix.shape[1]])
     # We assume the img is grayscale
     # Loop over every pixel of the image
     for column in range(img_matrix.shape[1]):     
         for row in range(img_matrix.shape[0]):
             if(img_matrix[row, column] > threshold):
-                result[row,column] = img_matrix[row,column]
+                if(keepvalue):
+                    result[row, column] = img_matrix[row, column]
+                else:
+                    result[row, column] = 1
             else:
                 result[row, column] = 0
     return result
+
+def squareTracing(img_matrix):
+    contour_points = []
+    x = None
+    y = None
+    start_x = None
+    start_y = None
+    orientation = "down"
+
+    for column in range(img_matrix.shape[1]):     
+        for row in range(img_matrix.shape[0]):
+            if(img_matrix[row, column] == 1):
+                # White pixel is found, and set as starting point
+                contour_points.append((row, column))
+                start_x, start_y = (row, column)
+    
+    # If not initiliazed, we start with the start pixel
+    x = start_x
+    y = start_y
+    # And go left because current pixel is white
+    x = start_x - 1
+    while(x != start_x & y != start_y):
+        # If current pixel is white, we go 'left' with
+        # respect to the current orientations
+        if((img_matrix[x, y] == 1) & (orientation == "down")):
+            # Add it to the list
+            contour_points.append(img_matrix[x, y])
+            # Go right
+            x = x + 1
+        if((img_matrix[x, y] == 1) & (orientation == "up")):
+            contour_points.append(img_matrix[x, y])
+            # Go left
+            x = x - 1
+        if((img_matrix[x, y] == 1) & (orientation == "right")):
+            contour_points.append(img_matrix[x, y])
+            # Go up
+            y = y - 1
+        if((img_matrix[x, y] == 1) & (orientation == "left")):
+            contour_points.append(img_matrix[x, y])
+            # Go down
+            y = y + 1
+
+        # If current pixel is black, go 'right'.
+        # Going right with respect to the current orientation
+        if((img_matrix[x, y] == 0) & (orientation == "down")):
+            # Go left
+            x = x - 1
+        if((img_matrix[x, y] == 0) & (orientation == "up")):
+            # Go right
+            x = x + 1
+        if((img_matrix[x, y] == 0) & (orientation == "right")):
+            # Go down
+            y = y + 1
+        if((img_matrix[x, y] == 0) & (orientation == "left")):
+            # Go go up
+            y = y - 1
+        
+    return contour_points
 
 def convolution2D(m1, m2):
     result = np.empty([m1.shape[0], m1.shape[1]])
@@ -81,6 +142,19 @@ def convolution2D(m1, m2):
             # element-wise multiplication of the kernel and the image
             result[row,column]=(m2*m1_padded[row:row+m2.shape[0],column:column+m2.shape[1]]).sum() 
     return result
+
+# Return a list of connected points
+def connectedDots(points):
+    connectedAreas = []
+    # Loop through every points
+    lastPoint = (None, None)
+    for point in points:
+        if(isNear(point, lastPoint)):
+            pass
+    pass
+
+def isNear(p1, p2):
+    pass
 
 def gkern(kernlen=5, sigma=1):
     #Returns a 2D Gaussian kernel array.

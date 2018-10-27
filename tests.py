@@ -313,7 +313,7 @@ def TestCannyEdgeFilter():
     fig.add_subplot(2, 4, 3).title.set_text('Threshold result')
     plt.axis('off')
     plt.imshow(thresholded, cmap=plt.cm.gray)
-
+    
     edges1 = feature.canny(stop_photo, 1.5)
     fig.add_subplot(2, 4, 4).title.set_text('Canny edge result')
     plt.axis('off')
@@ -324,8 +324,19 @@ def TestCannyEdgeFilter():
     plt.axis('off')
     plt.imshow(edges2, cmap=plt.cm.gray)
 
-    plt.show()
+    fig.add_subplot(2, 4, 6).title.set_text('Contour detection result')
+    plt.axis('off')
+    plt.imshow(edges2, cmap=plt.cm.gray)
+    points = fltr.squareTracing(edges2)
+    for point in points:
+        # X and Y switched for plotting
+        plt.scatter([point[1]], [point[0]], c='r', s=2)
 
+    fig.add_subplot(2, 4, 7).title.set_text('result')
+    plt.axis('off')
+    plt.imshow(edges2, cmap=plt.cm.gray)
+
+    plt.show()
 
 def main():
     
@@ -342,6 +353,7 @@ def main():
     #TestStopSignFilter()
 
     TestCannyEdgeFilter()
+
 
 if __name__ == '__main__':
     main()
