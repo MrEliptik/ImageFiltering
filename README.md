@@ -3,4 +3,4 @@ Few simple tools made to filter images. Built for university course "Computer Vi
 
 # File structure
 "filter.py" contains the Filter class, with the different filtering and image processing methods (grayscale conversion, 2D convolution, ..)
-"tests.py" contains a bunch of tests made on "stop_1_no_alpha.png" image, to verify the different functionnalities. 
+"tests.py" contains a bunch of tests made on "stop_1.png" image, to verify the different functionnalities. 
