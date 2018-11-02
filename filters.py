@@ -143,19 +143,6 @@ def convolution2D(m1, m2):
             result[row,column]=(m2*m1_padded[row:row+m2.shape[0],column:column+m2.shape[1]]).sum() 
     return result
 
-# Return a list of connected points
-def connectedDots(points):
-    connectedAreas = []
-    # Loop through every points
-    lastPoint = (None, None)
-    for point in points:
-        if(isNear(point, lastPoint)):
-            pass
-    pass
-
-def isNear(p1, p2):
-    pass
-
 def gkern(kernlen=5, sigma=1):
     #Returns a 2D Gaussian kernel array.
     interval = (2*sigma+1.)/(kernlen)
@@ -172,8 +159,6 @@ def RGBtoGrayscale(rgb_matrix):
         for i in range(rgb_matrix.shape[1]):
             grayscale_matrix[j,i] = 0.2126 * rgb_matrix[j,i,0] + 0.7152 * rgb_matrix[j,i,1] + 0.0722 * rgb_matrix[j,i,2]
     return grayscale_matrix
-
-
 
 def filter2D(big_matrix, filter_matrix):
     #Convolves im with window, over all three colour channels

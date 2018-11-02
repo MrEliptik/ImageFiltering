@@ -2,8 +2,12 @@ import filters as fltr
 import numpy as np  
 import matplotlib.pyplot as plt  
 import matplotlib.image as mpimg
+import matplotlib.patches as patches
 import imageio
 from scipy import signal
+
+from skimage.filters import gaussian
+from skimage.segmentation import active_contour
 
 from skimage import io
 from skimage import feature
@@ -248,50 +252,8 @@ def TestGrayscaleConversion():
     # Show results
     plt.show()
 
-def TestStopSignFilter():
-    img_path = "stop_1_no_alpha.png"
-
-    fig=plt.figure(figsize=(1, 2))
-
-    # Show original image
-    img = plt.imread(img_path)
-    fig.add_subplot(2, 4, 1).title.set_text('Original')
-    plt.axis('off')
-    plt.imshow(img) 
-
-    # Load an image as matrix
-    stop_photo = io.imread(img_path, as_gray=True)
-
-    img_path = "stop_sign_only.png"
-
-    # Show original image
-    img = plt.imread(img_path)
-    fig.add_subplot(2, 4, 2).title.set_text('Original')
-    plt.axis('off')
-    plt.imshow(img) 
-
-    # Load an image as matrix
-    stop_only = io.imread(img_path, as_gray=True)
-
-    result = fltr.convolution2D(stop_photo, stop_only)
-
-    fig.add_subplot(2, 4, 3).title.set_text('Grayscale result')
-    plt.axis('off')
-    plt.imshow(result, cmap=plt.cm.gray) 
-
-    # Create filter 
-    filtr = fltr.Filter("top_sobel", 3)
-    stop_filtered = filtr.filterGrayscale(stop_only)
-
-    fig.add_subplot(2, 4, 4).title.set_text('Edge result')
-    plt.axis('off')
-    plt.imshow(stop_filtered, cmap=plt.cm.gray) 
-
-    # Show results
-    plt.show()
-
 def TestCannyEdgeFilter():
-    img_path = "stop_1_no_alpha.png"
+    img_path = "stop_1.png"
 
     fig=plt.figure(figsize=(1, 2))
 
@@ -309,35 +271,141 @@ def TestCannyEdgeFilter():
     plt.imshow(stop_photo, cmap=plt.cm.gray)
 
     # Threshold 
-    thresholded = fltr.threshold(stop_photo, 0.82)
+    thresholded = fltr.threshold(stop_photo, 0.8) #0.82
     fig.add_subplot(2, 4, 3).title.set_text('Threshold result')
     plt.axis('off')
     plt.imshow(thresholded, cmap=plt.cm.gray)
     
+    # Canny edge
     edges1 = feature.canny(stop_photo, 1.5)
     fig.add_subplot(2, 4, 4).title.set_text('Canny edge result')
     plt.axis('off')
     plt.imshow(edges1, cmap=plt.cm.gray)
 
+    # Canny edge on threshold
     edges2 = feature.canny(thresholded, 1.2)
     fig.add_subplot(2, 4, 5).title.set_text('Canny edge on threshold result')
     plt.axis('off')
     plt.imshow(edges2, cmap=plt.cm.gray)
 
-    fig.add_subplot(2, 4, 6).title.set_text('Contour detection result')
+    plt.show()
+
+def TestSquareTracing():
+    img_path = "stop_1.png"
+
+    fig=plt.figure(figsize=(1, 2))
+
+    # Show original image
+    img = plt.imread(img_path)
+    fig.add_subplot(2, 3, 1).title.set_text('Original')
+    plt.axis('off')
+    plt.imshow(img) 
+
+    # Load an image as matrix
+    stop_photo = io.imread(img_path, as_gray=True)
+
+    fig.add_subplot(2, 3, 2).title.set_text('Grayscale result')
+    plt.axis('off')
+    plt.imshow(stop_photo, cmap=plt.cm.gray)
+
+    # Threshold 
+    thresholded = fltr.threshold(stop_photo, 0.82) #0.82
+    fig.add_subplot(2, 3, 3).title.set_text('Threshold result')
+    plt.axis('off')
+    plt.imshow(thresholded, cmap=plt.cm.gray)
+
+    # Canny edge on threshold
+    edges2 = feature.canny(thresholded, 1.2)
+    fig.add_subplot(2, 3, 4).title.set_text('Canny edge on threshold result')
     plt.axis('off')
     plt.imshow(edges2, cmap=plt.cm.gray)
+
+    # Apply squaretracing algorithm to get the contour
     points = fltr.squareTracing(edges2)
+    # Draw the contour 
     for point in points:
         # X and Y switched for plotting
         plt.scatter([point[1]], [point[0]], c='r', s=2)
 
-    fig.add_subplot(2, 4, 7).title.set_text('result')
+    plt.show()
+   
+def TestStopSignFilter():
+    # DONT WORK WELL
+    #img_path = "stop_closeup.png"
+    #img_path = "stop_hand.jpg"
+    #img_path = "stop_w_background.jpg"
+
+    # WORKS WELL
+    #img_path = "stop_1.png"
+    #img_path = "stop_sign_only.png"
+    img_path = "stop_sign_pole_1.jpg"
+    #img_path = "stop_sign_pole_2.png"
+
+    fig=plt.figure(figsize=(1, 2))
+
+    # Show original image
+    img = plt.imread(img_path)
+    fig.add_subplot(2, 3, 1).title.set_text('Original')
+    plt.axis('off')
+    plt.imshow(img) 
+
+    # Load an image as matrix
+    stop_photo = io.imread(img_path, as_gray=True)
+
+    fig.add_subplot(2, 3, 2).title.set_text('Grayscale result')
+    plt.axis('off')
+    plt.imshow(stop_photo, cmap=plt.cm.gray)
+
+    # Threshold 
+    thresholded = fltr.threshold(stop_photo, 0.82) #0.82
+    fig.add_subplot(2, 3, 3).title.set_text('Threshold result')
+    plt.axis('off')
+    plt.imshow(thresholded, cmap=plt.cm.gray)
+
+    # Canny edge on threshold
+    edges2 = feature.canny(thresholded, 1.2)
+    fig.add_subplot(2, 3, 4).title.set_text('Canny edge on threshold result')
     plt.axis('off')
     plt.imshow(edges2, cmap=plt.cm.gray)
 
+    # To print the contour on canny edge on threshold result
+    fig.add_subplot(2, 3, 5).title.set_text('Contour detection result')
+    plt.axis('off')
+    plt.imshow(edges2, cmap=plt.cm.gray)
+    
+    # Get the axes of the plot
+    ax = plt.gca()
+
+    # Create the region in which we'll find contour
+    s = np.linspace(0, 2*np.pi, 400)
+    x = (img.shape[1]/2) + (img.shape[1]/2)*np.cos(s)
+    y = (img.shape[0]/2) + (img.shape[0]/2)*np.sin(s)
+    init = np.array([x, y]).T
+
+    # Get the contour using the region we defined
+    snake = active_contour(gaussian(edges2, 3), init, alpha=0.010, beta=5, gamma=0.001)
+
+    # Plot the init region and the contour detected
+    ax.plot(init[:, 0], init[:, 1], '--r', lw=1)
+    ax.plot(snake[:, 0], snake[:, 1], '-b', lw=1)
+
+    # Grabs the min and max coordinates of the contour to draw a rectangle
+    x_min = min(snake[:,0])
+    y_min = min(snake[:,1])
+    x_max = max(snake[:,0])
+    y_max = max(snake[:,1])
+    width = x_max - x_min
+    height = y_max - y_min
+
+    # Create a Rectangle patch
+    rect = patches.Rectangle((x_min, y_min), width, height, linewidth=2, edgecolor='g', facecolor='none')
+
+    # Add the patch to the Axe
+    ax.add_patch(rect) 
+
     plt.show()
 
+ 
 def main():
     
     #Test2DConvolution()
@@ -350,9 +418,11 @@ def main():
 
     #TestGrayscaleConversion()
 
-    #TestStopSignFilter()
+    #TestCannyEdgeFilter()
 
-    TestCannyEdgeFilter()
+    #TestSquareTracing()
+
+    TestStopSignFilter()
 
 
 if __name__ == '__main__':
