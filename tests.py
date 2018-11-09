@@ -412,37 +412,59 @@ def TestStopSignFilter():
     ax = plt.gca()
     ax.add_patch(rect) 
 
-    '''
-    # To print the contour on canny edge on threshold result
-    fig.add_subplot(2, 3, 6).title.set_text('Contours detection')
-    plt.axis('off')
-    plt.imshow(edges2, cmap=plt.cm.gray)
-
-    # Get the axes of the plot
-    ax = plt.gca()
-
-    # Find contours at a constant value of 0.8
-    contours = measure.find_contours(edges2, 0.8)
-
-    for n, contour in enumerate(contours):
-        ax.plot(contour[:, 1], contour[:, 0], '-b', linewidth=1)
-        # Grabs the min and max coordinates of the contour to draw a rectangle
-        x_min = min(contour[:,0])
-        y_min = min(contour[:,1])
-        x_max = max(contour[:,0])
-        y_max = max(contour[:,1])
-        width = x_max - x_min
-        height = y_max - y_min
-
-        # Create a Rectangle patch
-        rect = patches.Rectangle((y_min, x_min), width, height, linewidth=2, edgecolor='g', facecolor='none')
-
-        # Add the patch to the Axe
-        ax.add_patch(rect) 
-    '''
     plt.show()
 
+def TestMirroring():
+    img_path = "stop_1.png"
+
+    fig=plt.figure(figsize=(1, 2))
+
+    # GRAYSCALE
+    img = io.imread(img_path, as_gray=True)
+    fig.add_subplot(2, 4, 1).title.set_text('Original')
+    plt.axis('off')
+    plt.imshow(img, cmap=plt.cm.gray) 
+
+    # By default both axis are mirrored
+    mirrored = fltr.Mirror(img)
+    fig.add_subplot(2, 4, 2).title.set_text('Mirrored both axis')
+    plt.axis('off')
+    plt.imshow(mirrored, cmap=plt.cm.gray) 
+
+    mirrored = fltr.Mirror(img, 'vertical')
+    fig.add_subplot(2, 4, 3).title.set_text('Mirrored vertical')
+    plt.axis('off')
+    plt.imshow(mirrored, cmap=plt.cm.gray) 
+
+    mirrored = fltr.Mirror(img, 'horizontal')
+    fig.add_subplot(2, 4, 4).title.set_text('Mirrored horizontal')
+    plt.axis('off')
+    plt.imshow(mirrored, cmap=plt.cm.gray) 
+
+    # COLOR
+    img = io.imread(img_path)
+    fig.add_subplot(2, 4, 5).title.set_text('Original')
+    plt.axis('off')
+    plt.imshow(img) 
+
+    mirrored = fltr.Mirror(img)
+    fig.add_subplot(2, 4, 6).title.set_text('Mirrored both axis')
+    plt.axis('off')
+    plt.imshow(mirrored) 
+
+    mirrored = fltr.Mirror(img, 'vertical')
+    fig.add_subplot(2, 4, 7).title.set_text('Mirrored vertical')
+    plt.axis('off')
+    plt.imshow(mirrored) 
+
+    mirrored = fltr.Mirror(img, 'horizontal')
+    fig.add_subplot(2, 4, 8).title.set_text('Mirrored horizontal')
+    plt.axis('off')
+    plt.imshow(mirrored)
+
+    plt.show()
  
+
 def main():
     
     #Test2DConvolution()
@@ -459,7 +481,9 @@ def main():
 
     #TestSquareTracing()
 
-    TestStopSignFilter()
+    #TestStopSignFilter()
+
+    TestMirroring()
 
 
 if __name__ == '__main__':

@@ -160,6 +160,38 @@ def RGBtoGrayscale(rgb_matrix):
             grayscale_matrix[j,i] = 0.2126 * rgb_matrix[j,i,0] + 0.7152 * rgb_matrix[j,i,1] + 0.0722 * rgb_matrix[j,i,2]
     return grayscale_matrix
 
+def Mirror(img, axis='both'):
+    print(img.shape)
+    if(len(img.shape) == 2):
+        mirrored = np.empty([img.shape[0], img.shape[1]])
+        for j in range(img.shape[0]):
+            for i in range(img.shape[1]):
+                if(axis == 'both'):
+                    mirrored[(img.shape[0]-1)-j, (img.shape[1]-1)-i] = img[j,i]
+                elif(axis == 'horizontal'):
+                    mirrored[(img.shape[0]-1)-j, i] = img[j,i]
+                elif(axis == 'vertical'):
+                    mirrored[j, (img.shape[1]-1)-i] = img[j,i]
+    elif(len(img.shape) == 3):
+        im = []
+        for d in range(3):
+            im_conv_d = Mirror(img[:,:,d], axis)
+            im.append(im_conv_d)
+        mirrored = np.stack(im, axis=2).astype("uint8")
+    # TODO : Fix it when there's an alpha channel
+    elif(len(img.shape) == 4):
+        mirrored = np.empty([img.shape[0], img.shape[1], img.shape[2]])
+        for d in range(3):
+            for j in range(img.shape[0]):
+                for i in range(img.shape[1]):
+                    if(axis == 'both'):
+                        mirrored[(img.shape[0]-1)-j, (img.shape[1]-1)-i, d, :] = img[j,i,d,:]
+                    elif(axis == 'horizontal'):
+                        mirrored[(img.shape[0]-1)-j, i, d, :] = img[j,i,d,:]
+                    elif(axis == 'vertical'):
+                        mirrored[j, (img.shape[1]-1)-i, d,:] = img[j,i,d,:]
+    return mirrored
+
 def filter2D(big_matrix, filter_matrix):
     #Convolves im with window, over all three colour channels
     ims = []
